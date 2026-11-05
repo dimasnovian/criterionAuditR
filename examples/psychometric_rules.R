@@ -18,3 +18,19 @@ psychometric_rules <- function() {
             "Linear rescaling of total to 0 to 100", tolerance = 1e-10)
   )
 }
+
+inject_psychometric_faults <- function(data) {
+  faulty <- data
+  key_rows <- head(which(data$q4_raw != 3L), 20L)
+  faulty$q4_key[key_rows] <- faulty$q4_raw[key_rows]
+  # Propagate the incorrect key before introducing faults at later stages.
+  faulty$subscale_a <- faulty$q1 + faulty$q2 + faulty$q3 + faulty$q4_key
+  faulty$total <- faulty$subscale_a + faulty$subscale_b
+  total_rows <- head(setdiff(seq_len(nrow(data)), key_rows), 15L)
+  faulty$total[total_rows] <- faulty$total[total_rows] + 1L
+  faulty$score_band <- as.integer(faulty$total >= 24L)
+  band_rows <- head(setdiff(seq_len(nrow(data)), c(key_rows, total_rows)), 10L)
+  faulty$score_band[band_rows] <- 1L - faulty$score_band[band_rows]
+  faulty$rescaled_total <- 100 * (faulty$total - 8) / 32
+  faulty
+}

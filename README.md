@@ -48,6 +48,8 @@ Generated questionnaire data, an independent ordinal control, aggregate checks, 
 - Exports CSV audit evidence and RDS result objects.
 - Illustrates conventional item-total and item-rest correlations using independent generated responses.
 
+The [scoring comparison](examples/COMPARISON.md) reports a controlled comparison on the same simulated questionnaire. `scoreItems` reproduced all clean composites and exposed 35 discordant stored totals after recomputation. Local checks separated 20 reverse-key discrepancies, 15 total-score discrepancies, and 10 threshold-label discrepancies. All 18 rule-by-scenario results matched manual R checks. The comparison runner and results are in `run_psychometric_comparison.R` and `outputs/psychometric_comparison/`.
+
 For interactive use:
 
 ```r

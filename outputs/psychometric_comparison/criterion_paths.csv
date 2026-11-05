@@ -1,0 +1,5 @@
+"predictor","relationship","evidence"
+"q4_raw","criterion_component","q4_raw -> q4_key -> subscale_a -> total -> score_band"
+"total","criterion_component","total -> score_band"
+"rescaled_total","shared_component","total; subscale_a; subscale_b; q1; q2; q3; q4_key; q5; q6; q7; q8; q4_raw"
+"external_noise","not_flagged","No relationship in supplied rules"

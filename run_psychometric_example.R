@@ -37,18 +37,7 @@ ca_write(clean, file.path(out, "clean"))
 write.csv(d, file.path(out, "simulated_questionnaire.csv"), row.names = FALSE)
 
 # Prespecified software fault controls, not prevalence estimates.
-# Propagate an uncorrected reverse key through its downstream scoring pipeline.
-bad <- d
-key_rows <- head(which(d$q4_raw != 3L), 20L)
-bad$q4_key[key_rows] <- bad$q4_raw[key_rows]
-bad$subscale_a <- bad$q1 + bad$q2 + bad$q3 + bad$q4_key
-bad$total <- bad$subscale_a + bad$subscale_b
-total_rows <- head(setdiff(seq_len(n), key_rows), 15L)
-bad$total[total_rows] <- bad$total[total_rows] + 1L
-bad$score_band <- as.integer(bad$total >= 24L)
-band_rows <- head(setdiff(seq_len(n), c(key_rows, total_rows)), 10L)
-bad$score_band[band_rows] <- 1L - bad$score_band[band_rows]
-bad$rescaled_total <- 100 * (bad$total - 8) / 32
+bad <- inject_psychometric_faults(d)
 injected <- ca_audit(bad, "total", predictors, rules)
 ca_write(injected, file.path(out, "injected"))
 faults <- data.frame(output = c("q4_key", "total", "score_band"),

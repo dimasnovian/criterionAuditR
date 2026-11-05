@@ -1,5 +1,9 @@
 # criterionAuditR validation evidence
 
+## Comparison with established scoring and manual checks
+
+On the same 2,000 generated response profiles, the published `psych` 2.6.9 `scoreItems` R source reproduced every clean composite. Comparing recomputed scores with faulty stored totals identified 35 differences. The stage-specific audit found 20 reverse-key, 15 local total-score, and 10 threshold-label discrepancies. Across clean, faulty, and incomplete scenarios, all six rule results agreed with explicit base R checks on mismatch counts and evaluated denominators. In the incomplete scenario, 25 missing keyed values reduced the denominators for two affected equations to 1,975. The graph records the item-to-label path and the shared ancestor of the rescaled total and label. See [the design, scope and reproduction commands](examples/COMPARISON.md).
+
 ## Primary psychological measurement demonstration
 
 The executable `run_psychometric_example.R` generated and audited 2,000 profiles on a hypothetical eight-item questionnaire with two correlated facets and five ordered response categories. The clean run evaluated each of six equations in all 2,000 profiles with zero mismatches. The controlled faulty run found 20 reverse-key mismatches, 15 total-score mismatches, and 10 classification mismatches, exactly matching the planted errors. The remaining equations were internally consistent. See `outputs/psychometric_demo/injected_faults.csv` and the clean/injected rule checks.
