@@ -1,5 +1,9 @@
 # criterionAuditR validation evidence
 
+## Evidence across scoring designs
+
+The three cases in [TRANSFER.md](examples/TRANSFER.md) cover reverse-keyed ordinal sums, dichotomous domain sums with a conjunctive cutoff, and a weighted index rounded before classification. The audit recovered 45, 23, and 25 planted discrepancies respectively and checked the intended row groups for each rule. Clean data agreed on all 63,639 evaluated rule values. For the published ability data, 1,248 of 1,525 profiles could be evaluated for the total and decision under the declared completeness rule. Four synthetic weighted combinations changed labels when thresholding preceded rounding. The reported run used the pinned public `psychTools` 2.6.4 data and R 4.6.1 on Windows 11.
+
 ## Comparison with established scoring and manual checks
 
 On the same 2,000 generated response profiles, the published `psych` 2.6.9 `scoreItems` R source reproduced every clean composite. Comparing recomputed scores with faulty stored totals identified 35 differences. The stage-specific audit found 20 reverse-key, 15 local total-score, and 10 threshold-label discrepancies. Across clean, faulty, and incomplete scenarios, all six rule results agreed with explicit base R checks on mismatch counts and evaluated denominators. In the incomplete scenario, 25 missing keyed values reduced the denominators for two affected equations to 1,975. The graph records the item-to-label path and the shared ancestor of the rescaled total and label. See [the design, scope and reproduction commands](examples/COMPARISON.md).

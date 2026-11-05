@@ -50,6 +50,8 @@ Generated questionnaire data, an independent ordinal control, aggregate checks, 
 
 The [scoring comparison](examples/COMPARISON.md) reports a controlled comparison on the same simulated questionnaire. `scoreItems` reproduced all clean composites and exposed 35 discordant stored totals after recomputation. Local checks separated 20 reverse-key discrepancies, 15 total-score discrepancies, and 10 threshold-label discrepancies. All 18 rule-by-scenario results matched manual R checks. The comparison runner and results are in `run_psychometric_comparison.R` and `outputs/psychometric_comparison/`.
 
+The [cross-design audit](examples/TRANSFER.md) applies the same interface to three scoring structures. It adds 1,525 published dichotomous ability profiles and an exhaustive grid of 6,048 weighted and rounded task combinations to the ordinal questionnaire. The program recovered 93 planted discrepancies across 20 rules. `run_score_transfer.R` and `outputs/score_transfer/` provide the execution and aggregate evidence.
+
 For interactive use:
 
 ```r
