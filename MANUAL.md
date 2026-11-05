@@ -6,6 +6,12 @@ When an item contributes to a total score, associating the item with that total 
 
 The program's intended contribution is an inspectable record joining declared provenance, row-level rule checks, and exportable review evidence. Item-rest correlations are established statistics. `psych::alpha()` already reports `r.drop`, the correlation of each item with the remaining scale. criterionAuditR does not claim to introduce that statistic or replace psychometric reliability software. See Revelle's official documentation: https://www.personality-project.org/r/psych/help/alpha.html
 
+## Primary questionnaire workflow
+
+Run `Rscript run_psychometric_example.R` from the program directory. The example audits a negatively keyed item, two subscales, the inclusive total, a threshold band, and a linear rescaling. It generates 2,000 five-category profiles and a separate 5,000-profile independent ordinal control. The scoring rule and generating model are documented in [examples/PSYCHOMETRIC_EXAMPLE.md](examples/PSYCHOMETRIC_EXAMPLE.md). No observed human data or validated scale is implied. `ca_partwhole` receives responses after the explicit reverse key has been applied.
+
+For interactive use, source `examples/psychometric_rules.R` after the core file, read `outputs/psychometric_demo/simulated_questionnaire.csv`, and call `ca_audit(data, "total", c("q4_raw", "subscale_a", "score_band"), psychometric_rules())`. The returned paths distinguish an item's indirect contribution through its key and subscale from a label derived from the total. A rule check verifies local numerical consistency against stored direct parents. It does not automatically repair entries or prove that an incorrect upstream value did not propagate to apparently consistent downstream values.
+
 ## Define construction rules
 
 ```r

@@ -1,0 +1,7 @@
+"output","status","n_rows","n_complete_inputs","n_evaluated","n_unevaluated","n_mismatch","mismatch_rate","max_absolute_error","tolerance","missing_columns","description"
+"q4_key","evaluated",2000,2000,2000,0,20,0.01,4,0,"","Reverse-key item 4 on a 1 to 5 response scale"
+"subscale_a","evaluated",2000,2000,2000,0,0,0,0,0,"","Sum four keyed self-regulation items"
+"subscale_b","evaluated",2000,2000,2000,0,0,0,0,0,"","Sum four keyed persistence items"
+"total","evaluated",2000,2000,2000,0,15,0.0075,1,0,"","Sum two subscales, range 8 to 40"
+"score_band","evaluated",2000,2000,2000,0,10,0.005,1,0,"","Illustrative threshold at 24; no diagnostic interpretation"
+"rescaled_total","evaluated",2000,2000,2000,0,0,0,0,1e-10,"","Linear rescaling of total to 0 to 100"

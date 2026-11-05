@@ -1,6 +1,6 @@
 # criterionAuditR
 
-Base R software for auditing declared overlap between predictors and the variables used to construct a score or classification criterion.
+Base R software for reviewing psychological questionnaire scoring and declared overlap between predictors and constructed criteria. It records the scoring key, traces item-to-subscale-to-total paths, and checks stored scores against explicit equations.
 
 **Version 0.1.0: development source distributed as executable R scripts.** This repository does not yet provide an installable R package or a CRAN release.
 
@@ -16,6 +16,7 @@ cd criterionAuditR
 Run the included demonstrations and tests:
 
 ```sh
+Rscript run_psychometric_example.R
 Rscript run_examples.R
 Rscript tests/run_tests.R
 Rscript audit_file.R examples/financial_input.csv millionaire_status examples/financial_rules.R outputs/cli_demo
@@ -27,6 +28,16 @@ In PowerShell, when Rscript is not on PATH, use the quoted executable path with 
 & "C:\Program Files\R\R-4.6.1\bin\Rscript.exe" .\run_examples.R
 & "C:\Program Files\R\R-4.6.1\bin\Rscript.exe" .\tests\run_tests.R
 ```
+
+## Primary psychological measurement example
+
+`Rscript run_psychometric_example.R` generates a hypothetical eight-item self-regulation questionnaire with two related facets, five response categories, and one negatively keyed raw item. The 2,000 profiles are generated computationally; they are not responses collected from people or a validated instrument. The example verifies the reverse key, two subscales, their total, an illustrative score band, and a rescaled total.
+
+All six clean scoring rules agreed. The prespecified fault controls recovered exactly 20 uncorrected reverse keys, 15 altered total scores, and 10 flipped score-band labels. The inclusive subscale-to-total correlation was .785; the correlation with the nonoverlapping subscale was .252. The comparison illustrates why overlap must be considered when interpreting associations. It does not establish that either correlation is an estimate of external validity.
+
+The separate null control generates 5,000 independent profiles on five ordinal items. Item-total correlations were .435 to .460 and item-rest correlations were -.005 to .012. Six integration checks passed, in addition to the 15 existing core tests. These are one reproducible demonstration and planted software faults, not a sensitivity/specificity benchmark.
+
+Generated questionnaire data, an independent ordinal control, aggregate checks, correlation summaries, and audit objects are in `outputs/psychometric_demo/`. Run `Rscript run_psychometric_example.R outputs/my_psychometric_run` to select another output directory. See [examples/PSYCHOMETRIC_EXAMPLE.md](examples/PSYCHOMETRIC_EXAMPLE.md) for the generating model and interpretation.
 
 ## What it does
 
@@ -54,7 +65,7 @@ See [MANUAL.md](MANUAL.md) for arguments, interpretation, and limitations, and [
 
 ## Requirements and validation
 
-Only base R is required. The program was tested under **R 4.6.1 on Windows 11 x64**, where all **15 automated tests passed**. macOS and Linux execution have not been tested. The input is read into memory, so required memory scales with input size. No API keys, network access, or contributed R packages are needed to run the included examples.
+Only base R is required. The program was tested under **R 4.6.1 on Windows 11 x64**, where all **15 core tests and six psychometric demonstration checks passed**. macOS and Linux execution have not been tested. The input is read into memory, so required memory scales with input size. No API keys, network access, or contributed R packages are needed to run the included examples.
 
 ## Data and reproducibility
 
@@ -78,7 +89,8 @@ Running demonstrations overwrites their generated input and output files in the 
 | --- | --- |
 | `criterionAuditR.R` | Core source functions |
 | `audit_file.R` | Command-line CSV audit |
-| `run_examples.R` | Executable demonstrations |
+| `run_psychometric_example.R` | Primary questionnaire scoring audit and ordinal control |
+| `run_examples.R` | Additional mathematical and financial demonstrations |
 | `examples/` | Original generated inputs and rule definitions |
 | `outputs/` | Observed CSV and RDS outputs, with the recorded R session |
 | `tests/` | Automated tests and the observed test log |

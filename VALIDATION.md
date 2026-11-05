@@ -1,5 +1,15 @@
 # criterionAuditR validation evidence
 
+## Primary psychological measurement demonstration
+
+The executable `run_psychometric_example.R` generated and audited 2,000 profiles on a hypothetical eight-item questionnaire with two correlated facets and five ordered response categories. The clean run evaluated each of six equations in all 2,000 profiles with zero mismatches. The controlled faulty run found 20 reverse-key mismatches, 15 total-score mismatches, and 10 classification mismatches, exactly matching the planted errors. The remaining equations were internally consistent. See `outputs/psychometric_demo/injected_faults.csv` and the clean/injected rule checks.
+
+The correlation of subscale A with its inclusive total was 0.7850655; with nonoverlapping subscale B it was 0.2524326. The independent five-item ordinal control (5,000 profiles) yielded item-total correlations .4346255 to .4602663 and item-rest correlations -.004573489 to .011864448. These are single seeded demonstrations. They do not estimate error prevalence, general detection performance, construct validity, or a newly proposed psychometric estimator.
+
+The 15 core tests were rerun and passed under R 4.6.1 on Windows 11. Six additional demonstration integration checks passed: clean equations, agreement with the complete raw scoring key, exact planted-fault recovery, expected graph relationships, the independent ordinal control, and absence of declared overlap between disjoint subscales. Runtime locale warnings were unchanged; other operating systems remain untested.
+
+The new example uses existing core API version 0.1.0. Full design details, seeds, scoring key, interpretation, and output paths are in `examples/PSYCHOMETRIC_EXAMPLE.md`. All new response data were simulated; no questionnaire was administered to people. The financial demonstration below is retained as a secondary software example.
+
 ## Observed external-data results
 
 The data file used for the executed demonstration was the source-provided sample_10k_rows.csv, reconstructed from all 10,001 text lines without changing field values. It has 10,000 records and 274 variables, including 4,263 millionaire labels. The provider's separate validation report describes 100,000 records in the full source file; those full-file results were not recomputed here.
