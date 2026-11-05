@@ -1,0 +1,6 @@
+"total_assets","total_liabilities","net_worth","millionaire_status","savings_rate","high_saver_status","investment_assets","high_investor_status","multi_millionaire_status","monthly_expenses","financial_independence_status"
+8e+05,1e+05,7e+05,0,0.1,0,0,0,0,2000,1
+1100000,50000,1050000,1,0.2,1,1e+05,1,0,2500,1
+2e+06,2e+05,1800000,1,0.3,1,5e+05,1,0,3000,1
+5500000,2e+05,5300000,1,0.4,1,3e+06,1,1,4000,1
+5e+05,20000,480000,0,0.15,0,50000,0,0,1500,1

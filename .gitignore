@@ -1,0 +1,12 @@
+*.Rhistory
+*.RData
+.Rproj.user/
+*.zip
+*.tar.gz
+*.docx
+*.pdf
+__pycache__/
+.DS_Store
+Thumbs.db
+Millionaire_Habits_Dataset.csv
+sample_10k_rows.csv

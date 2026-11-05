@@ -1,0 +1,21 @@
+$input_basename
+[1] "sample_10k_rows.csv"
+
+$n_rows
+[1] 10000
+
+$n_columns
+[1] 274
+
+$n_millionaire
+[1] 4263
+
+$audit_elapsed_seconds
+[1] 0.15
+
+$data_object_bytes
+[1] 20660648
+
+$sample_scope
+[1] "External supplied sample only, not the 100000-row source file"
+

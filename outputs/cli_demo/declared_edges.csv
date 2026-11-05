@@ -1,0 +1,4 @@
+"parent","child"
+"total_assets","net_worth"
+"total_liabilities","net_worth"
+"net_worth","millionaire_status"

@@ -1,0 +1,16 @@
+PASS 1 multi-hop criterion components 
+PASS 2 shared component and undeclared variable distinction 
+PASS 3 exact identities checked 
+PASS 4 injected label mismatch counted 
+PASS 5 missing inputs excluded with visible denominator 
+PASS 6 declared rounding tolerance 
+PASS 7 cycle rejected 
+PASS 8 duplicate output rejected 
+PASS 9 missing rule columns explicit 
+PASS 10 non-vector rule result rejected 
+PASS 11 criterion descendants 
+PASS 12 provenance-only rules never reported as verified 
+PASS 13 independent item rest control 
+PASS 14 part-whole uses a common complete sample 
+PASS 15 undefined expected values cannot pass 
+ALL 15 TESTS PASSED

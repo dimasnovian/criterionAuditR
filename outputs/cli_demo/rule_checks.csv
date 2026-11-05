@@ -1,0 +1,3 @@
+"output","status","n_rows","n_complete_inputs","n_evaluated","n_unevaluated","n_mismatch","mismatch_rate","max_absolute_error","tolerance","missing_columns","description"
+"net_worth","evaluated",5,5,5,0,0,0,0,0.02,"",""
+"millionaire_status","evaluated",5,5,5,0,0,0,0,0,"",""
