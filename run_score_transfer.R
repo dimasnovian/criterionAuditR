@@ -1,4 +1,4 @@
-# Audit distinct score constructions using simulated and published response data.
+# Audit distinct score constructions using generated inputs.
 full <- commandArgs(trailingOnly = FALSE)
 script <- sub("^--file=", "", full[grepl("^--file=", full)][1L])
 root <- dirname(normalizePath(script, mustWork = TRUE))
@@ -7,21 +7,7 @@ out <- if (length(args)) args[1L] else file.path(root, "outputs", "score_transfe
 source(file.path(root, "criterionAuditR.R"))
 source(file.path(root, "examples", "psychometric_rules.R"))
 
-if (length(args) >= 2L) {
-  stopifnot(unname(tools::md5sum(args[2L])) == "30457c8d5652d78793d228f992867481")
-  external <- new.env(parent = emptyenv())
-  load(args[2L], envir = external)
-  ability <- external$ability
-  ability_source <- "psychTools 2.6.4 ability.rda at 7dc591f8ac11c0ef1764cf853f3065aa60653d09"
-} else {
-  if (!requireNamespace("psychTools", quietly = TRUE)) {
-    stop("Use psychTools or supply the pinned ability.rda file as the second argument.")
-  }
-  ability <- psychTools::ability
-  ability_source <- paste("psychTools", packageVersion("psychTools"), "ability")
-}
-stopifnot(identical(dim(ability), c(1525L, 16L)), all(unlist(ability) %in% c(0, 1, NA)))
-ability <- as.data.frame(ability)
+if (length(args) > 1L) stop("Supply at most one output directory.")
 
 audit_case <- function(design, origin, clean, faulty, criterion, predictors, rules,
                        denominators, planted) {
@@ -71,32 +57,42 @@ ordinal_case <- audit_case("ordinal_questionnaire", "simulated", ordinal, ordina
   "score_band", c("q4_raw", "total", "rescaled_total", "external_noise"), ordinal_rules,
   ordinal_denominators, list(q4_key = ordinal_key, total = ordinal_total, score_band = ordinal_label))
 
-# Published dichotomous responses with a deliberately illustrative decision rule.
-items <- names(ability)
-domains <- list(
-  reasoning = c("reason.4", "reason.16", "reason.17", "reason.19"),
-  letters = c("letter.7", "letter.33", "letter.34", "letter.58"),
-  matrices = c("matrix.45", "matrix.46", "matrix.47", "matrix.55"),
-  rotation = c("rotate.3", "rotate.4", "rotate.6", "rotate.8"))
-stopifnot(setequal(unlist(domains), items))
-ability <- ability[, unlist(domains)]
-rownames(ability) <- NULL
+# Simulated dichotomous responses from a general and four domain factors.
+set.seed(20261107)
+n_ability <- 1600L
+domains <- list(reasoning = paste0("reason_", 1:4), verbal = paste0("verbal_", 1:4),
+                matrices = paste0("matrix_", 1:4), spatial = paste0("spatial_", 1:4))
 domain_names <- names(domains)
+items <- unlist(domains, use.names = FALSE)
+general_factor <- rnorm(n_ability)
+domain_factors <- matrix(rnorm(n_ability * length(domains)), nrow = n_ability)
+item_difficulty <- seq(-1.2, 1.2, length.out = length(items))
+probability <- plogis(outer(.85 * general_factor, item_difficulty, `-`) +
+                        .55 * domain_factors[, rep(seq_along(domains), each = 4L)])
+responses <- matrix(rbinom(length(probability), 1L, c(probability)), nrow = n_ability,
+                    dimnames = list(NULL, items))
+# Mark one item missing in each of 240 distinct profiles, 60 per domain.
+missing_rows <- sample.int(n_ability, 240L)
+missing_items <- rep(seq_along(items), each = 15L)
+responses[cbind(missing_rows, missing_items)] <- NA_integer_
+ability <- as.data.frame(responses)
+stopifnot(identical(dim(ability), c(n_ability, length(items))),
+          all(unlist(ability) %in% c(0, 1, NA)))
 decision <- function(total, reasoning) {
   result <- rep(NA_character_, length(total))
   complete <- !is.na(total) & !is.na(reasoning)
   result[complete] <- ifelse(total[complete] >= 10 & reasoning[complete] >= 2, "meets", "below")
   result
 }
-observed <- ability
-for (domain in domain_names) observed[[domain]] <- rowSums(ability[, domains[[domain]]])
-observed$binary_total <- rowSums(ability)
-observed$decision <- decision(observed$binary_total, observed$reasoning)
-observed$scaled_total <- 100 * observed$binary_total / 16
+ability_scores <- ability
+for (domain in domain_names) ability_scores[[domain]] <- rowSums(ability[, domains[[domain]]])
+ability_scores$binary_total <- rowSums(ability)
+ability_scores$decision <- decision(ability_scores$binary_total, ability_scores$reasoning)
+ability_scores$scaled_total <- 100 * ability_scores$binary_total / 16
 domain_rules <- Map(function(name, cols) {
   ca_rule(name, cols, function(d) Reduce(`+`, d[, cols]), "Four dichotomous items")
 }, domain_names, domains)
-observed_rules <- c(unname(domain_rules), list(
+ability_scores_rules <- c(unname(domain_rules), list(
   ca_rule("binary_total", domain_names, function(d) Reduce(`+`, d[, domain_names]), "Sum four domain scores"),
   ca_rule("decision", c("binary_total", "reasoning"),
           function(d) ifelse(d$binary_total >= 10 & d$reasoning >= 2, "meets", "below"),
@@ -104,27 +100,27 @@ observed_rules <- c(unname(domain_rules), list(
   ca_rule("scaled_total", "binary_total", function(d) d$binary_total * 6.25,
           "Scale from 0 to 100", tolerance = 1e-10)))
 
-observed_bad <- observed
-eligible <- which(!is.na(observed$decision))
-reason_rows <- head(eligible[observed$reasoning[eligible] < 4L], 11L)
-observed_bad$reasoning[reason_rows] <- observed_bad$reasoning[reason_rows] + 1L
-observed_bad$binary_total <- rowSums(observed_bad[, domain_names])
-total_rows <- head(setdiff(eligible[observed$binary_total[eligible] < 16L], reason_rows), 7L)
-observed_bad$binary_total[total_rows] <- observed_bad$binary_total[total_rows] + 1L
-observed_bad$decision <- decision(observed_bad$binary_total, observed_bad$reasoning)
-label_rows <- head(setdiff(which(observed_bad$binary_total == 10L & observed_bad$reasoning >= 2L),
+ability_scores_bad <- ability_scores
+eligible <- which(!is.na(ability_scores$decision))
+reason_rows <- head(eligible[ability_scores$reasoning[eligible] < 4L], 11L)
+ability_scores_bad$reasoning[reason_rows] <- ability_scores_bad$reasoning[reason_rows] + 1L
+ability_scores_bad$binary_total <- rowSums(ability_scores_bad[, domain_names])
+total_rows <- head(setdiff(eligible[ability_scores$binary_total[eligible] < 16L], reason_rows), 7L)
+ability_scores_bad$binary_total[total_rows] <- ability_scores_bad$binary_total[total_rows] + 1L
+ability_scores_bad$decision <- decision(ability_scores_bad$binary_total, ability_scores_bad$reasoning)
+label_rows <- head(setdiff(which(ability_scores_bad$binary_total == 10L & ability_scores_bad$reasoning >= 2L),
                            c(reason_rows, total_rows)), 5L)
-observed_bad$decision[label_rows] <- "below"
-observed_bad$scaled_total <- 100 * observed_bad$binary_total / 16
+ability_scores_bad$decision[label_rows] <- "below"
+ability_scores_bad$scaled_total <- 100 * ability_scores_bad$binary_total / 16
 stopifnot(length(reason_rows) == 11L, length(total_rows) == 7L, length(label_rows) == 5L)
 complete_profiles <- sum(rowSums(is.na(ability)) == 0L)
-stopifnot(complete_profiles == 1248L)
+stopifnot(complete_profiles == n_ability - length(missing_rows))
 domain_coverage <- vapply(domains, function(cols) sum(rowSums(is.na(ability[, cols])) == 0L), integer(1L))
-observed_denominators <- c(domain_coverage, binary_total = complete_profiles,
+ability_scores_denominators <- c(domain_coverage, binary_total = complete_profiles,
                            decision = complete_profiles, scaled_total = complete_profiles)
-ability_case <- audit_case("dichotomous_ability", "published_item_responses", observed, observed_bad,
-  "decision", c("reason.4", "reasoning", "binary_total", "scaled_total"), observed_rules,
-  observed_denominators, list(reasoning = reason_rows, binary_total = total_rows, decision = label_rows))
+ability_case <- audit_case("dichotomous_ability", "simulated_dichotomous", ability_scores, ability_scores_bad,
+  "decision", c("reason_1", "reasoning", "binary_total", "scaled_total"), ability_scores_rules,
+  ability_scores_denominators, list(reasoning = reason_rows, binary_total = total_rows, decision = label_rows))
 
 # Exhaustive integer grid for a weighted, rounded three-task index.
 weighted <- expand.grid(accuracy = 0:17, recall = 0:13, fluency = 0:23, KEEP.OUT.ATTRS = FALSE)
@@ -175,17 +171,20 @@ cases <- list(ordinal_case, ability_case, weighted_case)
 summary <- do.call(rbind, lapply(cases, `[[`, "summary"))
 checks <- do.call(rbind, lapply(cases, `[[`, "checks"))
 paths <- do.call(rbind, lapply(cases, `[[`, "paths"))
-stopifnot(ability_case$paths$evidence[1L] == "reason.4 -> reasoning -> decision",
+stopifnot(ability_case$paths$evidence[1L] == "reason_1 -> reasoning -> decision",
           weighted_case$paths$evidence[1L] == "accuracy -> accuracy_pct -> index_raw -> index_reported -> band",
           ability_case$paths$relationship[4L] == "shared_component",
           weighted_case$paths$relationship[4L] == "shared_component")
 dir.create(out, recursive = TRUE, showWarnings = FALSE)
+write.csv(ability, file.path(out, "simulated_ability_items.csv"), row.names = FALSE)
+write.csv(weighted[c("accuracy", "recall", "fluency")],
+          file.path(out, "weighted_task_grid.csv"), row.names = FALSE)
 write.csv(summary, file.path(out, "design_summary.csv"), row.names = FALSE)
 write.csv(checks, file.path(out, "rule_checks.csv"), row.names = FALSE)
 write.csv(paths, file.path(out, "criterion_paths.csv"), row.names = FALSE)
 write.csv(weighted[boundary, c("accuracy", "recall", "fluency", "index_raw", "index_reported")],
           file.path(out, "rounding_boundary.csv"), row.names = FALSE)
-capture.output(cat(ability_source, "\n"), sessionInfo(), file = file.path(out, "sessionInfo.txt"))
+capture.output(cat("Dichotomous simulation seed: 20261107\n"), sessionInfo(), file = file.path(out, "sessionInfo.txt"))
 print(summary, row.names = FALSE)
-cat("Published complete profiles:", complete_profiles, "of", nrow(ability), "\n")
+cat("Simulated complete profiles:", complete_profiles, "of", nrow(ability), "\n")
 cat("Rounding-dependent decisions:", length(boundary), "\n")

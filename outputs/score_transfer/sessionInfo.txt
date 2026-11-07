@@ -1,4 +1,4 @@
-psychTools 2.6.4 ability.rda at 7dc591f8ac11c0ef1764cf853f3065aa60653d09 
+Dichotomous simulation seed: 20261107
 R version 4.6.1 (2026-06-24 ucrt)
 Platform: x86_64-w64-mingw32/x64
 Running under: Windows 11 x64 (build 26300)
@@ -17,4 +17,4 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 loaded via a namespace (and not attached):
-[1] compiler_4.6.1 tools_4.6.1   
+[1] compiler_4.6.1

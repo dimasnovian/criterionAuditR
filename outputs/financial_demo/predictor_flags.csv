@@ -6,6 +6,6 @@
 "high_saver_status","not_flagged","No relationship in supplied rules"
 "investment_assets","not_flagged","No relationship in supplied rules"
 "high_investor_status","not_flagged","No relationship in supplied rules"
-"multi_millionaire_status","shared_component","net_worth; total_assets; total_liabilities"
+"multi_millionaire_status","not_flagged","No relationship in supplied rules"
 "monthly_expenses","not_flagged","No relationship in supplied rules"
-"financial_independence_status","shared_component","net_worth; total_assets; total_liabilities"
+"financial_independence_status","not_flagged","No relationship in supplied rules"

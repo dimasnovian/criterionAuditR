@@ -1,4 +1,4 @@
 "design","origin","profiles","rules","evaluated","unevaluated","clean_disagreements","planted","detected"
 "ordinal_questionnaire","simulated",2000,6,12000,0,0,45,45
-"dichotomous_ability","published_item_responses",1525,7,9303,1372,0,23,23
+"dichotomous_ability","simulated_dichotomous",1600,7,10240,960,0,23,23
 "weighted_rounded_index","exhaustive_simulated_grid",6048,7,42336,0,0,25,25
